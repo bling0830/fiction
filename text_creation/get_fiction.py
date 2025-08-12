@@ -60,6 +60,32 @@ def continue_writing(conclusion, merge, last_five_fictions):
     with open("continue_writing.md", "w") as f:
         f.write(result)
 
+def continue_writing_with_title_and_outline(conclusion, merge, last_five_fictions, title, outline):
+    user_content = f"""
+## 前文大纲
+{conclusion}
+
+## 前10章设定总结
+{merge}
+
+## 前5章正文
+{last_five_fictions}
+
+## 新一章的章节标题
+{title}
+
+## 新一章的大纲
+{outline}
+"""
+
+    messages = [
+        {"role": "system", "content": CONTINUE_WRITING_SYSTEM},
+        {"role": "user", "content": user_content},
+    ]
+
+    result = call_kimi(messages)
+    with open("continue_writing_with_title_and_outline.md", "w") as f:
+        f.write(result)
 
 if __name__ == "__main__":
     merge_setting()
@@ -69,4 +95,8 @@ if __name__ == "__main__":
         merge = f.read()
     with open("last_five_chapter.md", "r") as f:
         last_five_fictions = f.read()
-    continue_writing(conclusion, merge, last_five_fictions)
+    # continue_writing(conclusion, merge, last_five_fictions)
+
+    title = "乳白晶体的低语"
+    outline = "返回途中，泰坦解析晶体坐标，指向月球背面“雨海-A”陨坑；林栋决定48小时内启动绝密登月计划，需同时说服NASA与SpaceX高层。"
+    continue_writing_with_title_and_outline(conclusion, merge, last_five_fictions, title, outline)
