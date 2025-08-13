@@ -4,18 +4,20 @@ import json
 from tqdm import tqdm
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
-from novel_prompt import MERGE_SETTING_SYSTEM, CONTINUE_WRITING_SYSTEM
+from novel_prompt import MERGE_SETTING_SYSTEM, CONTINUE_WRITING_SYSTEM, CONTINUE_WRITING_SYSTEM_V3
 
 def call_kimi(messages):
     from openai import OpenAI
 
-    client = OpenAI(
-        api_key="sk-8XckQddnn9LBMsAEHcXOx3wImckQ4EhpTAN8Z9AnQ5iWWZKc", # 在这里将 MOONSHOT_API_KEY 替换为你从 Kimi 开放平台申请的 API Key
-        base_url="https://api.moonshot.cn/v1",
-    )
+    # client = OpenAI(
+    #     api_key="sk-8XckQddnn9LBMsAEHcXOx3wImckQ4EhpTAN8Z9AnQ5iWWZKc", # 在这里将 MOONSHOT_API_KEY 替换为你从 Kimi 开放平台申请的 API Key
+    #     base_url="https://api.moonshot.cn/v1",
+    # )
+    client = OpenAI(api_key="sk-a074425aea0641c9bf277864ac399f73", base_url="https://api.deepseek.com")
     
     completion = client.chat.completions.create(
-        model = "kimi-k2-0711-preview",
+        # model = "kimi-k2-0711-preview",
+        model = "deepseek-reasoner",
         messages = messages,
         temperature = 0.6,
         max_tokens=32768
@@ -26,7 +28,7 @@ def call_kimi(messages):
 
 
 def merge_setting():
-    with open("last_ten_conclusion.md", "r") as f:
+    with open("last_ten_conclusion.md", "r", encoding='utf-8') as f:
         last_ten_conclusion = f.read()
     
     messages = [
@@ -79,21 +81,21 @@ def continue_writing_with_title_and_outline(conclusion, merge, last_five_fiction
 """
 
     messages = [
-        {"role": "system", "content": CONTINUE_WRITING_SYSTEM},
+        {"role": "system", "content": CONTINUE_WRITING_SYSTEM_V3},
         {"role": "user", "content": user_content},
     ]
 
     result = call_kimi(messages)
-    with open("continue_writing_with_title_and_outline.md", "w") as f:
+    with open("continue_writing_with_title_and_outline.md", "w", encoding='utf-8') as f:
         f.write(result)
 
 if __name__ == "__main__":
     merge_setting()
-    with open("conclusion.md", "r") as f:
+    with open("conclusion.md", "r", encoding='utf-8') as f:
         conclusion = f.read()
-    with open("merge.md", "r") as f:
+    with open("merge.md", "r", encoding='utf-8') as f:
         merge = f.read()
-    with open("last_five_chapter.md", "r") as f:
+    with open("last_five_chapter.md", "r", encoding='utf-8') as f:
         last_five_fictions = f.read()
     # continue_writing(conclusion, merge, last_five_fictions)
 
